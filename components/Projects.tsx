@@ -71,12 +71,15 @@ export default function Projects() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [projects, setProjects] = useState(defaultProjects);
   // Fetch projects dynamically
-  useEffect(() => {
-    fetch("/api/projects", { cache: "no-store" }) // always fresh
-      .then(res => res.json())
-      .then(setProjects)
-      .catch(err => console.error(err));
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/projects", { cache: "no-store" })
+  //     .then(res => {
+  //       if (!res.ok) throw new Error(`API returned ${res.status}`);
+  //       return res.json();
+  //     })
+  //     .then(setProjects)
+  //     .catch(err => console.error("Projects fetch failed:", err));
+  // }, []);
 
   if (!projects.length) return <p>Loading projects...</p>;
   const goTo = useCallback(
@@ -466,6 +469,9 @@ export default function Projects() {
         .pj-arrows {
           display: flex;
           gap: 12px;
+           @media (max-width: 768px) {
+           display:none; 
+           } 
         }
 
         .pj-arrow-btn {
@@ -527,11 +533,12 @@ export default function Projects() {
         }
 
         @media (max-width: 768px) {
-          .pj-track { height: 560px; flex-direction: column; }
+          .pj-track { height: 800px; flex-direction: column; }
           .pj-card { min-height: 56px; min-width: unset; }
           .pj-card.active { flex: 6; }
           .pj-card-side-label { transform: translateX(-50%); bottom: 16px; }
           .pj-counter { display: none; }
+       
         }
       `}</style>
 
