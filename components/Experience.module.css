@@ -1,0 +1,451 @@
+/* ============================================================
+   Experience Section — Enhanced with smooth animations
+   ============================================================ */
+
+.experience {
+  padding: 7rem 0 8rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient bg glow */
+.bgGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 35% at 20% 40%, rgba(59, 130, 246, 0.045) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 30% at 80% 65%, rgba(139, 92, 246, 0.035) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Section header ─────────────────────────────────────────── */
+
+.sectionLabel {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #3b82f6;
+  margin: 0 0 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 4.5rem;
+  letter-spacing: -0.025em;
+}
+
+/* ── Timeline scaffold ──────────────────────────────────────── */
+
+.timeline {
+  position: relative;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* Vertical centre line */
+.timelineLine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.timelineLineInner {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(59, 130, 246, 0.25) 12%,
+    rgba(59, 130, 246, 0.35) 40%,
+    rgba(139, 92, 246, 0.25) 70%,
+    transparent 100%
+  );
+  /* Slow draw-down animation on load */
+  animation: lineGrow 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  transform-origin: top center;
+}
+
+@keyframes lineGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ── Timeline item (shared) ─────────────────────────────────── */
+
+.timelineItem {
+  position: relative;
+  width: 48%;
+  padding: 0;
+  margin-bottom: 3rem;
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timelineItem.left {
+  padding-right: 2.8rem;
+  text-align: right;
+  transform: translateX(-22px);
+}
+
+.timelineItem.right {
+  left: 52%;
+  padding-left: 2.8rem;
+  text-align: left;
+  transform: translateX(22px);
+}
+
+/* Visible state (JS adds this class) */
+.timelineItem.visible {
+  opacity: 1;
+  transform: translateX(0) !important;
+}
+
+/* ── Dot ────────────────────────────────────────────────────── */
+
+.timelineDot {
+  position: absolute;
+  top: 1.4rem;
+  z-index: 3;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.left .timelineDot {
+  right: -9px;
+}
+
+.right .timelineDot {
+  left: -9px;
+}
+
+/* Outer pulsing ring */
+.dotRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(59, 130, 246, 0.5);
+  background: #050505;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Inner filled core */
+.dotCore {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3b82f6;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+/* Pulse animation on visible */
+.timelineItem.visible .dotCore {
+  animation: dotPulse 2.2s ease-out 0.5s both;
+}
+
+@keyframes dotPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.55); }
+  60%  { box-shadow: 0 0 0 7px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+/* Hover: glow the dot */
+.timelineItem:hover .dotRing {
+  border-color: rgba(59, 130, 246, 0.9);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.timelineItem:hover .dotCore {
+  transform: scale(1.25);
+  background: #60a5fa;
+}
+
+/* ── Card ───────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 1.4rem 1.5rem 1.35rem;
+  overflow: hidden;
+  transition:
+    border-color 0.3s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s ease,
+    background 0.3s ease;
+}
+
+/* Subtle top accent bar (hidden by default) */
+.cardAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 18px 18px 0 0;
+  opacity: 0;
+  transform: scaleX(0.6);
+  transform-origin: left center;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover .cardAccent {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.048);
+  border-color: rgba(59, 130, 246, 0.22);
+  transform: translateY(-4px);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.25),
+    0 4px 16px rgba(59, 130, 246, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ── Card header ────────────────────────────────────────────── */
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.period {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.tech {
+  font-size: 0.7rem;
+  padding: 0.22rem 0.65rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 9999px;
+  color: #93c5fd;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover .tech {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+/* ── Role row ───────────────────────────────────────────────── */
+
+.roleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin-bottom: 0.2rem;
+}
+
+.left .roleRow {
+  flex-direction: row-reverse;
+}
+
+/* Faint index number */
+.indexNum {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(59, 130, 246, 0.35);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.25s ease;
+  flex-shrink: 0;
+}
+
+.card:hover .indexNum {
+  color: rgba(59, 130, 246, 0.65);
+}
+
+.role {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.company {
+  font-size: 0.88rem;
+  color: #a5b4fc;
+  font-weight: 600;
+  margin: 0 0 0.8rem;
+  letter-spacing: 0.01em;
+  transition: color 0.25s ease;
+}
+
+.card:hover .company {
+  color: #c4b5fd;
+}
+
+.desc {
+  font-size: 0.83rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.75;
+  margin: 0 0 1rem;
+}
+
+/* ── Tags ───────────────────────────────────────────────────── */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.left .cardHeader,
+.left .tags {
+  justify-content: flex-end;
+}
+
+.tag {
+  font-size: 0.68rem;
+  padding: 0.22rem 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.tag:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  transform: translateY(-1px);
+}
+
+/* ── Staggered entrance for tags ────────────────────────────── */
+
+.timelineItem.visible .tag {
+  animation: tagFadeIn 0.4s ease both;
+}
+
+.timelineItem.visible .tag:nth-child(1) { animation-delay: 0.35s; }
+.timelineItem.visible .tag:nth-child(2) { animation-delay: 0.42s; }
+.timelineItem.visible .tag:nth-child(3) { animation-delay: 0.49s; }
+.timelineItem.visible .tag:nth-child(4) { animation-delay: 0.56s; }
+
+@keyframes tagFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive (mobile) ────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .bgGlow {
+    display: none;
+  }
+
+  .timelineLine {
+    left: 18px;
+  }
+
+  .timelineItem,
+  .timelineItem.left,
+  .timelineItem.right {
+    width: 100%;
+    left: 0;
+    padding-left: 46px;
+    padding-right: 0;
+    text-align: left;
+    transform: translateY(18px);
+  }
+
+  .timelineItem.visible {
+    transform: translateY(0) !important;
+  }
+
+  .left .timelineDot,
+  .right .timelineDot {
+    left: 9px;
+    right: auto;
+  }
+
+  .left .cardHeader,
+  .left .tags {
+    justify-content: flex-start;
+  }
+
+  .left .roleRow {
+    flex-direction: row;
+  }
+
+  .sectionTitle {
+    font-size: 1.85rem;
+    margin-bottom: 3rem;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .timelineItem {
+    transition: opacity 0.3s ease;
+    transform: none !important;
+  }
+
+  .timelineLineInner {
+    animation: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+
+  .tag:hover {
+    transform: none;
+  }
+
+  .timelineItem.visible .tag {
+    animation: none;
+    opacity: 1;
+  }
+
+  .timelineItem.visible .dotCore {
+    animation: none;
+  }
+}

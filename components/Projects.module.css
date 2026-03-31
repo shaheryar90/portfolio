@@ -1,0 +1,462 @@
+/* ── GOOGLE FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+/* ── ROOT SECTION ── */
+.projects {
+  background: #0a0a0a;
+  padding: 100px 0 120px;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  position: relative;
+}
+
+/* ── NOISE TEXTURE ── */
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ── AMBIENT GLOW ── */
+.glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+  transition: background 0.8s ease, left 0.8s ease, top 0.8s ease;
+}
+
+/* ── INNER CONTAINER ── */
+.inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 64px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.sectionTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(52px, 7vw, 96px);
+  line-height: 0.9;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.sectionTitle em {
+  font-style: normal;
+  -webkit-text-stroke: 1px #fff;
+  color: transparent;
+}
+
+.counter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  color: #1a1a1a;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── SLIDER TRACK ── */
+.track {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  height: 480px;
+}
+
+/* ── CARD ── */
+.card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    flex 0.7s cubic-bezier(0.77, 0, 0.18, 1),
+    opacity 0.5s ease,
+    transform 0.5s ease;
+  flex: 1;
+  min-width: 72px;
+}
+
+.card.active {
+  flex: 5;
+  cursor: default;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s ease, filter 0.5s ease;
+  filter: brightness(0.45) saturate(0.8);
+}
+
+.card.active img {
+  filter: brightness(0.55) saturate(1);
+  transform: scale(1.02);
+}
+
+.card:not(.active):hover img {
+  filter: brightness(0.6) saturate(1);
+  transform: scale(1.05);
+}
+
+/* ── COLOR TINT OVERLAY ── */
+.cardTint {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  mix-blend-mode: color;
+}
+
+.card.active .cardTint {
+  opacity: 0.25;
+}
+
+/* ── INACTIVE SIDE LABEL ── */
+.cardSideLabel {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-90deg);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  transition: opacity 0.4s ease;
+}
+
+.card.active .cardSideLabel {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── ACTIVE CARD CONTENT ── */
+.cardContent {
+  position: absolute;
+  inset: 0;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.15s;
+  pointer-events: none;
+}
+
+.card.active .cardContent {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* gradient scrim */
+.cardContent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.5) 45%,
+    transparent 75%
+  );
+  z-index: 0;
+  border-radius: 20px;
+}
+
+.cardContent > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── CHIP ROW ── */
+.chipRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.chip {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.chip.accentChip {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── CARD TITLE ── */
+.cardTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 4vw, 56px);
+  color: #fff;
+  margin: 0 0 10px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+/* ── CARD DESCRIPTION ── */
+.cardDesc {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 480px;
+  margin: 0 0 22px;
+  animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* ── TAGS ── */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ── CTA BUTTON ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: #000;
+  background: #fff;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: fit-content;
+  animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.15);
+}
+
+.btnArrow {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: transform 0.25s ease;
+}
+
+.btn:hover .btnArrow {
+  transform: translate(2px, -2px);
+}
+
+/* ── YEAR BADGE ── */
+.yearBadge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
+}
+
+.card.active .yearBadge {
+  opacity: 1;
+}
+
+/* ── BOTTOM NAV ── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 36px;
+}
+
+/* ── DOTS ── */
+.dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  border: none;
+  background: none;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.dotInner {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: #333;
+  transition:
+    width 0.4s cubic-bezier(0.77, 0, 0.18, 1),
+    background 0.4s ease;
+}
+
+.dot.activeDot .dotInner {
+  width: 28px;
+  background: #fff;
+}
+
+/* ── ARROWS ── */
+.arrows {
+  display: flex;
+  gap: 12px;
+}
+
+.arrowBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #2a2a2a;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.arrowBtn:hover {
+  border-color: #555;
+  background: #1a1a1a;
+  transform: scale(1.08);
+}
+
+/* ── PROGRESS BAR ── */
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.progressText {
+  font-size: 11px;
+  font-weight: 500;
+  color: #444;
+  letter-spacing: 0.08em;
+  min-width: 32px;
+}
+
+.progressTextMuted {
+  color: #666;
+}
+
+.progressTrack {
+  width: 100px;
+  height: 1px;
+  background: #222;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #fff;
+  transition: width 0.6s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+/* ── KEYFRAMES ── */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .track {
+    height: 560px;
+    flex-direction: column;
+  }
+
+  .card {
+    min-height: 56px;
+    min-width: unset;
+  }
+
+  .card.active {
+    flex: 6;
+  }
+
+  .cardSideLabel {
+    transform: translateX(-50%);
+    bottom: 16px;
+  }
+
+  .counter {
+    display: none;
+  }
+}
