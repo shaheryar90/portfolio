@@ -9,7 +9,14 @@ export default function Hero() {
   const lastNameRef = useRef<HTMLSpanElement>(null);
   const handleScroll = (href: string) => {
     const target = document.querySelector(href);
-    if (target) target.scrollIntoView({ behavior: "smooth" });
+    if (target) {
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(target);
+      } else {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   // Parallax effect on mouse move

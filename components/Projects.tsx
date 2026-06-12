@@ -609,7 +609,7 @@ export default function Projects() {
         }
       `}</style>
 
-      <div className="pj-root">
+      <div id="projects" className="pj-root">
         {/* Featured header */}
         <div className="pj-header">
           <div className="pj-header-left">

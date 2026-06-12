@@ -24,6 +24,13 @@ body {
   overflow-x: hidden;
 }
 
+/* Hide default cursor on desktop when custom cursor is active */
+@media (min-width: 769px) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 body::before {
   content: "";
   position: fixed;

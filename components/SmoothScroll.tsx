@@ -22,6 +22,9 @@ export default function SmoothScroll() {
       infinite: false,
     });
 
+    // Expose Lenis instance globally
+    (window as any).lenis = lenis;
+
     // Update ScrollTrigger on scroll
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -34,6 +37,7 @@ export default function SmoothScroll() {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      (window as any).lenis = null;
       lenis.destroy();
       // Remove the ticker listener
       gsap.ticker.remove((time) => {
