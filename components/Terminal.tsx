@@ -109,9 +109,9 @@ export default function Terminal() {
   }, []);
 
   // Auto-scroll
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [lines]);
+  // useEffect(() => {
+  //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [lines]);
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
