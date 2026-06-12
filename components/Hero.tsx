@@ -2,10 +2,11 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import styles from "./Hero.module.css";
-
+import gsap from "gsap";
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
-
+  const firstNameRef = useRef<HTMLSpanElement>(null);
+  const lastNameRef = useRef<HTMLSpanElement>(null);
   const handleScroll = (href: string) => {
     const target = document.querySelector(href);
     if (target) target.scrollIntoView({ behavior: "smooth" });
@@ -30,15 +31,40 @@ export default function Hero() {
       if (orb1) orb1.style.transform = `translate(${xPct * 1.2}px, ${yPct * 1.2}px)`;
       if (orb2) orb2.style.transform = `translate(${-xPct * 0.8}px, ${-yPct * 0.8}px)`;
       if (orb3) orb3.style.transform = `translate(${xPct * 0.5}px, ${yPct * 1.5}px)`;
-      if (imageWrap) imageWrap.style.transform = `perspective(1000px) rotateY(${xPct * 0.3}deg) rotateX(${-yPct * 0.3}deg)`;
+      if (imageWrap)
+        imageWrap.style.transform = `perspective(1000px) rotateY(${xPct * 0.3}deg) rotateX(${-yPct * 0.3}deg)`;
     };
 
     hero.addEventListener("mousemove", handleMouseMove);
     return () => hero.removeEventListener("mousemove", handleMouseMove);
   }, []);
+    // GSAP Animation for Name
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { duration: 1, ease: "power3.out" } });
+    if (firstNameRef.current && lastNameRef.current) {
+      tl.from(firstNameRef.current, { y: 50, opacity: 0 })
+        .from(lastNameRef.current, { y: 50, opacity: 0 }, "-=0.5"); // overlap
+    }
+  }, []);
+
 
   return (
-    <section id="hero" className={styles.hero} ref={heroRef}>
+    <>    <section id="hero" className={styles.hero} ref={heroRef}>
+
+      {/* 🎥 Background Video */}
+      <video
+        className={styles.bgVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src="/videos/hero-bg.mp4" type="video/mp4" />
+      </video>
+
+      {/* Overlay */}
+      <div className={styles.videoOverlay}></div>
+
       {/* Animated background orbs */}
       <div className={styles.orb1}></div>
       <div className={styles.orb2}></div>
@@ -51,9 +77,8 @@ export default function Hero() {
       <div className={styles.noise}></div>
 
       <div className={styles.heroContainer}>
-        {/* ── LEFT CONTENT ── */}
+        {/* LEFT CONTENT */}
         <div className={styles.heroContent}>
-
           <div className={styles.badge}>
             <span className={styles.badgePulse}></span>
             <span className={styles.badgeDot}></span>
@@ -61,9 +86,8 @@ export default function Hero() {
           </div>
 
           <h1 className={styles.heroTitle}>
-            <span className={styles.firstName}>Shaheryar</span>
-
-            <span className={styles.lastName}>Khan</span>
+            <span ref={firstNameRef} className={styles.firstName}>Shaheryar</span>
+            <span ref={lastNameRef} className={styles.lastName}>Khan</span>
           </h1>
 
           <div className={styles.roleRow}>
@@ -73,20 +97,20 @@ export default function Hero() {
           </div>
 
           <p className={styles.heroDesc}>
-            4+ years crafting pixel-perfect, high-performance web experiences
+            5+ years crafting pixel-perfect, high-performance web experiences
             with <strong>React</strong>, <strong>Next.js</strong>, and{" "}
-            <strong>TypeScript</strong>. MSc Computer Science — NED University.
+            <strong>TypeScript</strong>.
           </p>
 
-          {/* Stat pills */}
+          {/* Stats */}
           <div className={styles.statsRow}>
             <div className={styles.statPill}>
-              <span className={styles.statNum}>4+</span>
+              <span className={styles.statNum}>5+</span>
               <span className={styles.statLabel}>Years Exp.</span>
             </div>
             <div className={styles.statDivider}></div>
             <div className={styles.statPill}>
-              <span className={styles.statNum}>30+</span>
+              <span className={styles.statNum}>20+</span>
               <span className={styles.statLabel}>Projects</span>
             </div>
             <div className={styles.statDivider}></div>
@@ -96,6 +120,7 @@ export default function Hero() {
             </div>
           </div>
 
+          {/* CTA */}
           <div className={styles.heroCtas}>
             <button
               className={styles.btnPrimary}
@@ -105,104 +130,75 @@ export default function Hero() {
               <span className={styles.btnArrow}>↓</span>
               <span className={styles.btnGlow}></span>
             </button>
+
             <button
               className={styles.btnSecondary}
               onClick={() => handleScroll("#contact")}
             >
               Get in Touch
             </button>
+
             <a
-              href="/resume.pdf"
+              href="/SHAHERYAR-KHAN-FRONTEND-DEVELOPER.pdf"
               download="Shaheryar_Khan_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.btnResume}
             >
-              <span className={styles.btnResumeIcon}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M8 1v9M8 10l-3-3M8 10l3-3"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M2 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
               Resume
             </a>
           </div>
 
-          {/* Tech stack chips */}
+          {/* Tech Stack */}
           <div className={styles.techStack}>
-            {["React", "Next.js", "TypeScript", "Tailwind"].map((tech) => (
-              <span key={tech} className={styles.techChip}>{tech}</span>
+            {["React", "Next.js", "TypeScript", "Tailwind" ,"django","fastapi","nest.js"].map((tech) => (
+              <span key={tech} className={styles.techChip}>
+                {tech}
+              </span>
             ))}
           </div>
         </div>
 
-        {/* ── RIGHT IMAGE ── */}
+        {/* RIGHT IMAGE */}
         <div className={styles.heroImageWrap}>
-          {/* <div className={styles.imageRing}></div> */}
           <div className={styles.imageGlow}></div>
+
           <div className={styles.imageBorder}>
             <Image
               src="/profile2.png"
-              alt="Shaheryar Khan – Front-End Developer"
+              alt="Profile"
               width={420}
               height={420}
               className={styles.profileImage}
               priority
             />
-            <div className={styles.imageShimmer}></div>
           </div>
 
           {/* Floating cards */}
           <div className={styles.floatCard1}>
-            <span className={styles.floatIcon}>⚡</span>
-            <div className={styles.floatText}>
-              <strong>React &amp; Next.js</strong>
-              <span>Expert</span>
-            </div>
+            ⚡Javascript Expert
           </div>
+
           <div className={styles.floatCard2}>
-            <span className={styles.floatIcon}>🎓</span>
-            <div className={styles.floatText}>
-              <strong>MSc Graduate</strong>
-              <span>NED University</span>
-            </div>
+            🎓 MSc Graduate
           </div>
+
           <div className={styles.floatCard3}>
-            <span className={styles.floatIcon}>🚀</span>
-            <div className={styles.floatText}>
-              <strong>Open to Work</strong>
-              <span>Remote / On-site</span>
-            </div>
+            🚀 Open to Work
           </div>
         </div>
       </div>
 
-      {/* Scroll cue */}
+      {/* Scroll */}
       <button
         className={styles.scrollCue}
         onClick={() => handleScroll("#about")}
-        aria-label="Scroll to about"
       >
-        <span className={styles.scrollText}>Scroll</span>
-        <span className={styles.scrollLine}></span>
+        Scroll ↓
       </button>
     </section>
+
+    </>
+
   );
 }

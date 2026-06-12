@@ -14,6 +14,7 @@ export default function Home() {
       <Experience />
       <Projects />
       <Footer />
+      <div id="overlay"></div>
     </main>
   );
 }

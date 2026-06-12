@@ -92,6 +92,11 @@
   padding: 0 1.5rem;
 }
 
+.overlay {
+  position: absolute;
+  inset: unset;
+}
+
 /* ---------- Background layers ---------- */
 .gridOverlay {
   position: absolute;
@@ -230,7 +235,15 @@
 .firstName {
   color: #f1f5f9;
   display: block;
+  /* animation: blinking 1s steps(1,end) infinite, */
+  
+  /* typing 4s steps(40,end); */
+  overflow: hidden;
+  white-space: nowrap;
+  /* border-right: 1px solid red; */
 }
+
+
 
 .lastName {
   display: block;
@@ -239,6 +252,10 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  /* animation: blinking 1s steps(1,end) infinite,
+  
+  typing 4s steps(40,end);
+  animation-delay: 2s; */
 }
 
 .lastName::after {
@@ -259,6 +276,7 @@
   align-items: center;
   gap: 0.75rem;
   animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+
 }
 
 .roleText {
@@ -267,6 +285,7 @@
   color: #94a3b8;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  
 }
 
 .roleDivider {
@@ -684,6 +703,27 @@
   background: linear-gradient(to bottom, currentColor, transparent);
   animation: scrollBounce 1.8s ease-in-out infinite;
   transform-origin: top;
+}
+.bgVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  opacity: 0.6; /* adjust */
+}
+
+.videoOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(10, 10, 10, 0.85),
+    rgba(10, 10, 10, 0.6)
+  );
+  z-index: -2;
 }
 
 /* ---------- Responsive ---------- */

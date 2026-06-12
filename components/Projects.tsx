@@ -4,678 +4,760 @@ import { useEffect, useRef, useState, useCallback } from "react";
 const defaultProjects = [
   {
     title: "Visit Abu Dhabi",
-    category: "Agency Work",
-    description:
-      "Official tourism website for Abu Dhabi, featuring high-performance landing pages and interactive maps.",
+    cat: "Agency Work",
+    desc: "Official tourism website for Abu Dhabi — high-performance landing pages, interactive maps and immersive content.",
     link: "https://visitabudhabi.ae/en",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
-    tags: ["Next.js", "React", "State Management", "Performance"],
+    img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=85",
+    tags: ["Next.js", "React", "Performance"],
     year: "2024",
     color: "#C9A84C",
   },
   {
     title: "DET – Dubai Learns",
-    category: "Agency Work",
-    description:
-      "Educational platform for Dubai, providing resources and information for students and educators across the emirate.",
-    link: "https://dubailearnsme.ae/",
-    image:
-      "det.png",
+    cat: "Agency Work",
+    desc: "Educational platform for Dubai providing resources and information for students and educators across the emirate.",
+    link: "https://dubailearns.ae/",
+    img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1400&q=85",
     tags: ["React", "Custom CSS", "Responsive Design"],
     year: "2023",
     color: "#4C8EC9",
   },
   {
+    title: "Naseej",
+    cat: "Sustainability Platform",
+    desc: "UAE textile circularity initiative — from community recycling action to national sustainability strategy, built multilingually on Umbraco CMS.",
+    link: "https://naseej-dev-umbraco.azurewebsites.net/",
+    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=85",
+    tags: ["Umbraco CMS", "Next.js", "Multi-language"],
+    year: "2025",
+    color: "#4CC97A",
+  },
+  {
     title: "Coral",
-    category: "Web App",
-    description:
-      "A fully functional e-commerce web application designed to enhance user experience and streamline the online shopping process.",
+    cat: "Web App",
+    desc: "A fully functional e-commerce application designed to enhance user experience and streamline the online shopping process.",
     link: "#",
-    image:
-      "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1400&q=85",
     tags: ["E-commerce", "React", "API Integration"],
     year: "2023",
     color: "#C9574C",
   },
   {
     title: "Active Ozone",
-    category: "Industrial App",
-    description:
-      "Facilitates the production cleaning industry with automation cleaning instruction cards in 8 different languages.",
+    cat: "Industrial App",
+    desc: "Facilitates the production cleaning industry with automated instruction cards delivered in 8 different languages.",
     link: "#",
-    image:
-      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1400&q=85",
     tags: ["Automation", "Multi-language", "React"],
     year: "2022",
-    color: "#4CC97A",
+    color: "#E8A838",
   },
   {
     title: "Invoices for Business",
-    category: "Fintech",
-    description:
-      "An Accounting Web App for Lawyers and clients. Lawyers can assign jobs, charge customers, and create transactions.",
+    cat: "Fintech",
+    desc: "Accounting web app for lawyers and clients — assign jobs, charge customers, and manage transactions seamlessly.",
     link: "#",
-    image:
-      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1400&q=85",
     tags: ["Fintech", "Next.js", "State Management"],
     year: "2022",
     color: "#9B4CC9",
   },
 ];
 
-export default function Projects() {
-  const [active, setActive] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
-  const [animDir, setAnimDir] = useState<"left" | "right">("right");
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [projects, setProjects] = useState(defaultProjects);
-  // Fetch projects dynamically
-  // useEffect(() => {
-  //   fetch("/api/projects", { cache: "no-store" })
-  //     .then(res => {
-  //       if (!res.ok) throw new Error(`API returned ${res.status}`);
-  //       return res.json();
-  //     })
-  //     .then(setProjects)
-  //     .catch(err => console.error("Projects fetch failed:", err));
-  // }, []);
+const CIRC = 113;
+const AUTO_DUR = 4800;
 
-  if (!projects.length) return <p>Loading projects...</p>;
-  const goTo = useCallback(
-    (index: number) => {
-      if (index === active) return;
-      setAnimDir(index > active ? "right" : "left");
-      setPrev(active);
-      setActive(index);
-      setTimeout(() => setPrev(null), 600);
+function pad(n: number) {
+  return String(n + 1).padStart(2, "0");
+}
+
+export default function Projects() {
+  const [cur, setCur] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
+  const [animating, setAnimating] = useState(false);
+  const [barKey, setBarKey] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const go = useCallback(
+    (next: number) => {
+      if (animating || next === cur) return;
+      setAnimating(true);
+      setPrev(cur);
+      setCur(next);
+      setBarKey((k) => k + 1);
+      setTimeout(() => {
+        setPrev(null);
+        setAnimating(false);
+      }, 1200);
     },
-    [active]
+    [animating, cur]
   );
 
-  const next = useCallback(() => {
-    goTo((active + 1) % projects.length);
-  }, [active, goTo]);
-
-  const startInterval = useCallback(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(next, 4000);
-  }, [next]);
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCur((c) => {
+        const next = (c + 1) % defaultProjects.length;
+        setPrev(c);
+        setAnimating(true);
+        setBarKey((k) => k + 1);
+        setTimeout(() => {
+          setPrev(null);
+          setAnimating(false);
+        }, 1200);
+        return next;
+      });
+    }, AUTO_DUR);
+  }, []);
 
   useEffect(() => {
-    startInterval();
+    resetTimer();
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [startInterval]);
+  }, [resetTimer]);
 
-  const handleCardClick = (i: number) => {
-    goTo(i);
-    startInterval();
+  const handleNav = (dir: "prev" | "next") => {
+    const next =
+      dir === "next"
+        ? (cur + 1) % defaultProjects.length
+        : (cur - 1 + defaultProjects.length) % defaultProjects.length;
+    go(next);
+    resetTimer();
   };
 
-  const p = projects[active];
+  const p = defaultProjects[cur];
+  const progressOffset = CIRC - CIRC * ((cur + 1) / defaultProjects.length);
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
 
         .pj-root {
-          background: #0a0a0a;
-          padding: 100px 0 120px;
-          overflow: hidden;
+          position: relative;
+          width: 100%;
+          background: #060606;
           font-family: 'DM Sans', sans-serif;
-          position: relative;
         }
 
-        .pj-noise {
-          position: absolute;
-          inset: 0;
-          opacity: 0.03;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-          pointer-events: none;
-        }
-
-        .pj-glow {
-          position: absolute;
-          width: 600px;
-          height: 600px;
-          border-radius: 50%;
-          filter: blur(120px);
-          opacity: 0.12;
-          pointer-events: none;
-          transition: background 0.8s ease, left 0.8s ease, top 0.8s ease;
-        }
-
-        .pj-inner {
-          max-width: 1300px;
-          margin: 0 auto;
-          padding: 0 40px;
-          position: relative;
-          z-index: 1;
-        }
-
+        /* ── FEATURED HEADER ── */
         .pj-header {
+          position: relative;
+          z-index: 20;
+          padding: 36px 64px 0;
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
-          margin-bottom: 64px;
+          pointer-events: none;
         }
 
-        .pj-label {
-          font-size: 11px;
+        .pj-header-left {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .pj-feat-label {
+          font-size: 10px;
           font-weight: 500;
-          letter-spacing: 0.22em;
-          color: #666;
+          letter-spacing: 0.3em;
           text-transform: uppercase;
-          margin-bottom: 12px;
+          color: rgba(255, 255, 255, 0.3);
         }
 
-        .pj-title {
+        .pj-feat-title {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(52px, 7vw, 96px);
+          font-size: clamp(36px, 5vw, 64px);
           line-height: 0.9;
           color: #fff;
-          margin: 0;
           letter-spacing: 0.02em;
+          margin: 0;
         }
 
-        .pj-title em {
+        .pj-feat-title em {
           font-style: normal;
-          -webkit-text-stroke: 1px #fff;
+          -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
           color: transparent;
         }
 
-        .pj-counter {
+        .pj-header-right {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          padding-bottom: 4px;
+        }
+
+        .pj-header-divider {
+          width: 40px;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .pj-header-counter {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: 80px;
-          color: #1a1a1a;
+          font-size: 48px;
+          color: rgba(255, 255, 255, 0.08);
           line-height: 1;
-          user-select: none;
+          letter-spacing: 0.02em;
+          transition: color 0.5s;
         }
 
-        /* ── SLIDER TRACK ── */
-        .pj-track {
-          display: flex;
-          gap: 16px;
-          align-items: stretch;
-          height: 480px;
-        }
-
-        /* ── CARD ── */
-        .pj-card {
+        /* ── STAGE ── */
+        .pj-stage {
           position: relative;
-          border-radius: 20px;
-          overflow: hidden;
-          cursor: pointer;
-          transition: flex 0.7s cubic-bezier(0.77,0,0.18,1),
-                      opacity 0.5s ease,
-                      transform 0.5s ease;
-          flex: 1;
-          min-width: 72px;
-        }
-
-        .pj-card.active {
-          flex: 5;
-          cursor: default;
-        }
-
-        .pj-card img {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          transition: transform 0.8s ease, filter 0.5s ease;
-          filter: brightness(0.45) saturate(0.8);
+          height: 100vh;
+          min-height: 560px;
+          overflow: hidden;
         }
 
-        .pj-card.active img {
-          filter: brightness(0.55) saturate(1);
-          transform: scale(1.02);
-        }
-
-        .pj-card:not(.active):hover img {
-          filter: brightness(0.6) saturate(1);
-          transform: scale(1.05);
-        }
-
-        /* color tint overlay */
-        .pj-card-tint {
+        /* ── SLIDES ── */
+        .pj-slide {
           position: absolute;
           inset: 0;
-          opacity: 0;
-          transition: opacity 0.6s ease;
-          mix-blend-mode: color;
+          overflow: hidden;
         }
 
-        .pj-card.active .pj-card-tint {
-          opacity: 0.25;
-        }
-
-        /* ── INACTIVE LABEL ── */
-        .pj-card-side-label {
-          position: absolute;
-          bottom: 28px;
-          left: 50%;
-          transform: translateX(-50%) rotate(-90deg);
-          white-space: nowrap;
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.5);
-          transition: opacity 0.4s ease;
-        }
-
-        .pj-card.active .pj-card-side-label {
-          opacity: 0;
-          pointer-events: none;
-        }
-
-        /* ── ACTIVE CONTENT ── */
-        .pj-card-content {
+        .pj-slide-bg {
           position: absolute;
           inset: 0;
-          padding: 36px 40px;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          opacity: 0;
-          transition: opacity 0.5s ease 0.15s;
-          pointer-events: none;
+          background-size: cover;
+          background-position: center;
         }
 
-        .pj-card.active .pj-card-content {
-          opacity: 1;
-          pointer-events: auto;
+        .pj-slide.entering .pj-slide-bg {
+          animation: pjBgIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        /* gradient scrim */
-        .pj-card-content::before {
-          content: '';
+        .pj-slide.leaving .pj-slide-bg {
+          animation: pjBgOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes pjBgIn {
+          from { transform: scale(1.07); opacity: 0; }
+          to   { transform: scale(1);    opacity: 1; }
+        }
+
+        @keyframes pjBgOut {
+          from { transform: scale(1);    opacity: 1; }
+          to   { transform: scale(0.96); opacity: 0; }
+        }
+
+        .pj-grad-left {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to right,
+            rgba(6,6,6,0.95) 0%,
+            rgba(6,6,6,0.7)  38%,
+            rgba(6,6,6,0.2)  65%,
+            transparent      100%
+          );
+        }
+
+        .pj-grad-bottom {
           position: absolute;
           inset: 0;
           background: linear-gradient(
             to top,
-            rgba(0,0,0,0.92) 0%,
-            rgba(0,0,0,0.5) 45%,
-            transparent 75%
+            rgba(6,6,6,0.98) 0%,
+            transparent      40%
           );
-          z-index: 0;
-          border-radius: 20px;
         }
 
-        .pj-card-content > * { position: relative; z-index: 1; }
-
-        .pj-chip-row {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 14px;
+        .pj-accent-bar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          z-index: 4;
+          transition: background 0.6s ease;
         }
 
-        .pj-chip {
-          font-size: 10px;
-          font-weight: 500;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          padding: 5px 12px;
-          border-radius: 100px;
-          border: 1px solid rgba(255,255,255,0.2);
-          color: rgba(255,255,255,0.7);
-          backdrop-filter: blur(8px);
-        }
-
-        .pj-chip.accent {
-          border-color: var(--accent);
-          color: var(--accent);
-        }
-
-        .pj-card-title {
+        .pj-slide-year {
+          position: absolute;
+          top: 24px;
+          right: 80px;
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(36px, 4vw, 56px);
-          color: #fff;
-          margin: 0 0 10px;
-          letter-spacing: 0.04em;
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          color: rgba(255, 255, 255, 0.2);
+          z-index: 3;
+        }
+
+        .pj-slide-num {
+          position: absolute;
+          bottom: 110px;
+          right: 80px;
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 110px;
           line-height: 1;
-          animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
+          color: rgba(255, 255, 255, 0.035);
+          z-index: 1;
+          user-select: none;
         }
 
-        .pj-card.active .pj-card-title {
-          animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+        /* ── SLIDE CONTENT ── */
+        .pj-content {
+          position: absolute;
+          bottom: 48px;
+          left: 64px;
+          right: 55%;
+          z-index: 3;
         }
 
-        .pj-card-desc {
-          font-size: 14px;
+        .pj-slide.entering .pj-content {
+          animation: pjContIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+        }
+
+        .pj-slide.leaving .pj-content {
+          animation: pjContOut 0.45s cubic-bezier(0.4, 0, 1, 1) both;
+        }
+
+        @keyframes pjContIn {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pjContOut {
+          from { opacity: 1; transform: translateY(0); }
+          to   { opacity: 0; transform: translateY(-18px); }
+        }
+
+        .pj-s-cat {
+          font-size: 9.5px;
+          font-weight: 500;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          margin-bottom: 10px;
+          animation: pjStag 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+        }
+
+        .pj-s-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(46px, 6.5vw, 80px);
+          line-height: 0.92;
+          color: #fff;
+          letter-spacing: 0.02em;
+          margin-bottom: 14px;
+          animation: pjStag 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+        }
+
+        .pj-s-desc {
+          font-size: 12.5px;
           font-weight: 300;
-          line-height: 1.65;
-          color: rgba(255,255,255,0.65);
-          max-width: 480px;
-          margin: 0 0 22px;
-          animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+          line-height: 1.8;
+          color: rgba(255, 255, 255, 0.5);
+          max-width: 340px;
+          margin-bottom: 18px;
+          animation: pjStag 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
         }
 
-        .pj-tags {
+        .pj-s-tags {
           display: flex;
           flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 28px;
-          animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.28s both;
+          gap: 6px;
+          margin-bottom: 24px;
+          animation: pjStag 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.41s both;
         }
 
-        .pj-tag {
-          font-size: 11px;
-          font-weight: 400;
-          letter-spacing: 0.05em;
-          padding: 4px 10px;
-          border-radius: 6px;
-          background: rgba(255,255,255,0.08);
-          color: rgba(255,255,255,0.6);
-          border: 1px solid rgba(255,255,255,0.1);
+        .pj-s-tag {
+          font-size: 9.5px;
+          padding: 3px 9px;
+          border-radius: 4px;
+          background: rgba(255, 255, 255, 0.07);
+          color: rgba(255, 255, 255, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.09);
+          letter-spacing: 0.04em;
         }
 
-        .pj-btn {
+        .pj-s-btn {
           display: inline-flex;
           align-items: center;
-          gap: 10px;
-          padding: 12px 24px;
+          gap: 8px;
+          padding: 10px 20px;
           border-radius: 100px;
-          font-size: 13px;
+          font-size: 11.5px;
           font-weight: 500;
-          letter-spacing: 0.06em;
+          letter-spacing: 0.08em;
           text-decoration: none;
           color: #000;
           background: #fff;
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
           width: fit-content;
-          animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.35s both;
+          transition: transform 0.22s, box-shadow 0.22s;
+          animation: pjStag 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.47s both;
         }
 
-        .pj-btn:hover {
+        .pj-s-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 12px 32px rgba(255,255,255,0.15);
+          box-shadow: 0 14px 32px rgba(255, 255, 255, 0.14);
         }
 
-        .pj-btn-arrow {
-          width: 22px;
-          height: 22px;
+        .pj-s-btn-ic {
+          width: 17px;
+          height: 17px;
           border-radius: 50%;
           background: #000;
           color: #fff;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 13px;
-          transition: transform 0.25s ease;
+          font-size: 10px;
+          transition: transform 0.22s;
         }
 
-        .pj-btn:hover .pj-btn-arrow {
+        .pj-s-btn:hover .pj-s-btn-ic {
           transform: translate(2px, -2px);
         }
 
-        /* ── TOP-RIGHT YEAR BADGE ── */
-        .pj-year-badge {
-          position: absolute;
-          top: 24px;
-          right: 24px;
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 13px;
-          letter-spacing: 0.12em;
-          color: rgba(255,255,255,0.4);
-          z-index: 2;
-          opacity: 0;
-          transition: opacity 0.4s ease 0.3s;
+        @keyframes pjStag {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
 
-        .pj-card.active .pj-year-badge {
-          opacity: 1;
-        }
-
-        /* ── BOTTOM NAV ── */
+        /* ── NAV ── */
         .pj-nav {
+          position: absolute;
+          right: 28px;
+          top: 50%;
+          transform: translateY(-50%);
           display: flex;
+          flex-direction: column;
           align-items: center;
-          justify-content: space-between;
-          margin-top: 36px;
+          gap: 10px;
+          z-index: 10;
         }
 
-        .pj-dots {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-
-        .pj-dot {
-          border: none;
-          background: none;
-          padding: 4px;
-          cursor: pointer;
-        }
-
-        .pj-dot-inner {
-          width: 6px;
-          height: 6px;
-          border-radius: 100px;
-          background: #333;
-          transition: width 0.4s cubic-bezier(0.77,0,0.18,1), background 0.4s ease;
-        }
-
-        .pj-dot.active .pj-dot-inner {
-          width: 28px;
-          background: #fff;
-        }
-
-        .pj-arrows {
-          display: flex;
-          gap: 12px;
-           @media (max-width: 768px) {
-           display:none; 
-           } 
-        }
-
-        .pj-arrow-btn {
-          width: 48px;
-          height: 48px;
+        .pj-nav-btn {
+          width: 38px;
+          height: 38px;
           border-radius: 50%;
-          border: 1px solid #2a2a2a;
-          background: transparent;
-          color: #fff;
+          border: 1px solid rgba(255, 255, 255, 0.13);
+          background: rgba(0, 0, 0, 0.5);
+          color: rgba(255, 255, 255, 0.7);
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 18px;
-          transition: border-color 0.2s, background 0.2s, transform 0.2s;
+          font-size: 14px;
+          transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+          backdrop-filter: blur(10px);
         }
 
-        .pj-arrow-btn:hover {
-          border-color: #555;
-          background: #1a1a1a;
-          transform: scale(1.08);
+        .pj-nav-btn:hover {
+          border-color: rgba(255, 255, 255, 0.35);
+          background: rgba(255, 255, 255, 0.1);
+          color: #fff;
+          transform: scale(1.1);
         }
 
-        /* ── PROGRESS BAR ── */
-        .pj-progress {
+        /* ── PROGRESS RING ── */
+        .pj-ring {
+          position: relative;
+          width: 40px;
+          height: 40px;
+        }
+
+        .pj-ring svg {
+          transform: rotate(-90deg);
+        }
+
+        .pj-ring-label {
+          position: absolute;
+          inset: 0;
           display: flex;
           align-items: center;
-          gap: 6px;
-        }
-
-        .pj-progress-text {
+          justify-content: center;
+          font-family: 'Bebas Neue', sans-serif;
           font-size: 11px;
-          font-weight: 500;
-          color: #444;
-          letter-spacing: 0.08em;
-          min-width: 32px;
+          color: rgba(255, 255, 255, 0.45);
+          letter-spacing: 0.05em;
         }
 
-        .pj-progress-track {
-          width: 100px;
-          height: 1px;
-          background: #222;
+        /* ── AUTO PROGRESS BAR ── */
+        .pj-autobar {
           position: relative;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.06);
+          z-index: 10;
           overflow: hidden;
         }
 
-        .pj-progress-fill {
+        .pj-autobar-fill {
+          height: 100%;
+          width: 0;
+        }
+
+        .pj-autobar-fill.running {
+          animation: pjBarFill ${AUTO_DUR}ms linear forwards;
+        }
+
+        @keyframes pjBarFill {
+          from { width: 0; }
+          to   { width: 100%; }
+        }
+
+        /* ── THUMBNAILS ── */
+        .pj-thumbs {
+          display: flex;
+          height: 88px;
+          overflow: hidden;
+        }
+
+        .pj-thumb {
+          flex: 1;
+          position: relative;
+          cursor: pointer;
+          overflow: hidden;
+          transition: flex 0.65s cubic-bezier(0.77, 0, 0.18, 1);
+        }
+
+        .pj-thumb.active {
+          flex: 2.5;
+          cursor: default;
+        }
+
+        .pj-thumb-img {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          transition: filter 0.45s, transform 0.55s;
+        }
+
+        .pj-thumb:not(.active) .pj-thumb-img {
+          filter: brightness(0.25) saturate(0.3);
+        }
+
+        .pj-thumb.active .pj-thumb-img {
+          filter: brightness(0.45) saturate(0.85);
+          transform: scale(1.06);
+        }
+
+        .pj-thumb:not(.active):hover .pj-thumb-img {
+          filter: brightness(0.4);
+        }
+
+        .pj-thumb-dim {
+          position: absolute;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.35);
+        }
+
+        .pj-thumb-bar {
           position: absolute;
           top: 0;
           left: 0;
-          height: 100%;
-          background: #fff;
-          transition: width 0.6s cubic-bezier(0.77,0,0.18,1);
+          right: 0;
+          height: 2px;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.65s cubic-bezier(0.77, 0, 0.18, 1);
         }
 
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
+        .pj-thumb.active .pj-thumb-bar {
+          transform: scaleX(1);
+        }
+
+        .pj-thumb-num {
+          position: absolute;
+          top: 10px;
+          left: 0;
+          right: 0;
+          text-align: center;
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.2);
+          letter-spacing: 0.1em;
+          transition: opacity 0.3s;
+        }
+
+        .pj-thumb.active .pj-thumb-num {
+          opacity: 0;
+        }
+
+        .pj-thumb-label {
+          position: absolute;
+          bottom: 10px;
+          left: 0;
+          right: 0;
+          text-align: center;
+          font-size: 8.5px;
+          font-weight: 500;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.4);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding: 0 6px;
+          transition: opacity 0.3s;
+        }
+
+        .pj-thumb.active .pj-thumb-label {
+          opacity: 0;
         }
 
         @media (max-width: 768px) {
-          .pj-track { height: 800px; flex-direction: column; }
-          .pj-card { min-height: 56px; min-width: unset; }
-          .pj-card.active { flex: 6; }
-          .pj-card-side-label { transform: translateX(-50%); bottom: 16px; }
-          .pj-counter { display: none; }
-       
+          .pj-header { padding: 24px 24px 0; }
+          .pj-content { left: 24px; right: 24px; bottom: 36px; }
+          .pj-slide-year, .pj-slide-num { right: 24px; }
+          .pj-nav { right: 10px; }
+          .pj-header-counter { font-size: 32px; }
         }
       `}</style>
 
-      <section id="projects" className="pj-root">
-        <div className="pj-noise" />
-        <div
-          className="pj-glow"
-          style={{
-            background: p.color,
-            top: "20%",
-            left: `${(active / (projects.length - 1)) * 60 + 10}%`,
-            transform: "translate(-50%,-50%)",
-          }}
-        />
-
-        <div className="pj-inner">
-          {/* Header */}
-          <div className="pj-header">
-            <div>
-              <p className="pj-label">Portfolio</p>
-              <h2 className="pj-title">
-                Featured <em>Projects</em>
-              </h2>
-            </div>
-            <div className="pj-counter">0{active + 1}</div>
+      <div className="pj-root">
+        {/* Featured header */}
+        <div className="pj-header">
+          <div className="pj-header-left">
+            <span className="pj-feat-label">Portfolio</span>
+            <h2 className="pj-feat-title">
+              Featured <em>Projects</em>
+            </h2>
           </div>
-
-          {/* Slider Track */}
-          <div className="pj-track">
-            {projects.map((proj, i) => (
-              <div
-                key={i}
-                className={`pj-card${active === i ? " active" : ""}`}
-                style={{ "--accent": proj.color } as React.CSSProperties}
-                onClick={() => i !== active && handleCardClick(i)}
-              >
-                <img src={proj.image} alt={proj.title} draggable={false} />
-
-                {/* Color tint */}
-                <div
-                  className="pj-card-tint"
-                  style={{ background: proj.color }}
-                />
-
-                {/* Year badge */}
-                <div className="pj-year-badge">{proj.year}</div>
-
-                {/* Inactive label */}
-                <div className="pj-card-side-label">{proj.title}</div>
-
-                {/* Active content */}
-                <div className="pj-card-content">
-                  <div className="pj-chip-row">
-                    <span className="pj-chip accent">{proj.category}</span>
-                    <span className="pj-chip">{proj.year}</span>
-                  </div>
-                  <h3 className="pj-card-title">{proj.title}</h3>
-                  <p className="pj-card-desc">{proj.description}</p>
-                  <div className="pj-tags">
-                    {proj.tags.map((tag, ti) => (
-                      <span key={ti} className="pj-tag">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  {proj.link !== "#" && (
-                    <a
-                      href={proj.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="pj-btn"
-                    >
-                      View Project
-                      <span className="pj-btn-arrow">↗</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Nav */}
-          <div className="pj-nav">
-            {/* Dots */}
-            <div className="pj-dots">
-              {projects.map((_, i) => (
-                <button
-                  key={i}
-                  className={`pj-dot${active === i ? " active" : ""}`}
-                  onClick={() => handleCardClick(i)}
-                  aria-label={`Go to project ${i + 1}`}
-                >
-                  <div className="pj-dot-inner" />
-                </button>
-              ))}
-            </div>
-
-            {/* Progress */}
-            <div className="pj-progress">
-              <span className="pj-progress-text">0{active + 1}</span>
-              <div className="pj-progress-track">
-                <div
-                  className="pj-progress-fill"
-                  style={{
-                    width: `${((active + 1) / projects.length) * 100}%`,
-                  }}
-                />
-              </div>
-              <span className="pj-progress-text" style={{ color: "#666" }}>
-                0{projects.length}
-              </span>
-            </div>
-
-            {/* Arrows */}
-            <div className="pj-arrows">
-              <button
-                className="pj-arrow-btn"
-                onClick={() =>
-                  handleCardClick(
-                    (active - 1 + projects.length) % projects.length
-                  )
-                }
-                aria-label="Previous"
-              >
-                ←
-              </button>
-              <button
-                className="pj-arrow-btn"
-                onClick={() => handleCardClick((active + 1) % projects.length)}
-                aria-label="Next"
-              >
-                →
-              </button>
+          <div className="pj-header-right">
+            <div className="pj-header-divider" />
+            <div className="pj-header-counter">
+              {pad(cur)} / {pad(defaultProjects.length - 1)}
             </div>
           </div>
         </div>
-      </section>
+
+        {/* Stage */}
+        <div className="pj-stage">
+          {/* Leaving slide */}
+          {prev !== null && (
+            <div className="pj-slide leaving" key={`prev-${prev}`}>
+              <div
+                className="pj-slide-bg"
+                style={{ backgroundImage: `url('${defaultProjects[prev].img}')` }}
+              />
+              <div className="pj-grad-left" />
+              <div className="pj-grad-bottom" />
+              <div
+                className="pj-accent-bar"
+                style={{ background: defaultProjects[prev].color }}
+              />
+              <div className="pj-content">
+                <p className="pj-s-cat" style={{ color: defaultProjects[prev].color }}>
+                  {defaultProjects[prev].cat}
+                </p>
+                <h3 className="pj-s-title">{defaultProjects[prev].title}</h3>
+              </div>
+            </div>
+          )}
+
+          {/* Entering slide */}
+          <div className="pj-slide entering" key={`cur-${cur}`}>
+            <div
+              className="pj-slide-bg"
+              style={{ backgroundImage: `url('${p.img}')` }}
+            />
+            <div className="pj-grad-left" />
+            <div className="pj-grad-bottom" />
+            <div className="pj-accent-bar" style={{ background: p.color }} />
+            <div className="pj-slide-year">{p.year}</div>
+            <div className="pj-slide-num">{pad(cur)}</div>
+            <div className="pj-content">
+              <p className="pj-s-cat" style={{ color: p.color }}>{p.cat}</p>
+              <h3 className="pj-s-title">{p.title}</h3>
+              <p className="pj-s-desc">{p.desc}</p>
+              <div className="pj-s-tags">
+                {p.tags.map((t, i) => (
+                  <span key={i} className="pj-s-tag">{t}</span>
+                ))}
+              </div>
+              {p.link !== "#" && (
+                <a
+                  href={p.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pj-s-btn"
+                >
+                  View Project
+                  <span className="pj-s-btn-ic">↗</span>
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Nav arrows + ring */}
+          <div className="pj-nav">
+            <button
+              className="pj-nav-btn"
+              onClick={() => { handleNav("prev"); resetTimer(); }}
+              aria-label="Previous"
+            >
+              ↑
+            </button>
+            <div className="pj-ring">
+              <svg width="40" height="40" viewBox="0 0 44 44">
+                <circle
+                  cx="22" cy="22" r="18"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.07)"
+                  strokeWidth="1.5"
+                />
+                <circle
+                  cx="22" cy="22" r="18"
+                  fill="none"
+                  stroke={p.color}
+                  strokeWidth="1.5"
+                  strokeDasharray={CIRC}
+                  strokeDashoffset={progressOffset}
+                  strokeLinecap="round"
+                  style={{
+                    transition:
+                      "stroke-dashoffset 0.6s cubic-bezier(0.77,0,0.18,1), stroke 0.5s",
+                  }}
+                />
+              </svg>
+              <div className="pj-ring-label">{pad(cur)}</div>
+            </div>
+            <button
+              className="pj-nav-btn"
+              onClick={() => { handleNav("next"); resetTimer(); }}
+              aria-label="Next"
+            >
+              ↓
+            </button>
+          </div>
+        </div>
+
+        {/* Auto-progress bar */}
+        <div className="pj-autobar">
+          <div
+            key={barKey}
+            className="pj-autobar-fill running"
+            style={{ background: p.color }}
+          />
+        </div>
+
+        {/* Thumbnails */}
+        <div className="pj-thumbs">
+          {defaultProjects.map((proj, i) => (
+            <div
+              key={i}
+              className={`pj-thumb${i === cur ? " active" : ""}`}
+              onClick={() => {
+                if (i !== cur) { go(i); resetTimer(); }
+              }}
+            >
+              <div
+                className="pj-thumb-img"
+                style={{ backgroundImage: `url('${proj.img}')` }}
+              />
+              <div className="pj-thumb-dim" />
+              <div className="pj-thumb-bar" style={{ background: proj.color }} />
+              <div className="pj-thumb-num">{pad(i)}</div>
+              <div className="pj-thumb-label">{proj.title}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 }

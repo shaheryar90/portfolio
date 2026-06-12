@@ -4,11 +4,12 @@ import styles from "./About.module.css";
 
 const skills = [
   { name: "React JS", level: 95 },
-  { name: "Next JS", level: 90 },
-  { name: "TypeScript", level: 88 },
-  { name: "JavaScript", level: 95 },
-  { name: "HTML5 & CSS3", level: 98 },
-  { name: "Node JS / Express", level: 75 },
+  { name: "Next JS", level: 85 },
+  { name: "TypeScript", level: 75 },
+  { name: "JavaScript", level: 90 },
+  { name: "Django / FastApi", level: 60 },
+  { name: "HTML5 & CSS3", level: 85 },
+  { name: "Node JS / Nest JS", level: 70 },
   { name: "Git & GitHub", level: 85 },
   { name: "React Native", level: 70 },
 ];
@@ -64,11 +65,11 @@ export default function About() {
 
             <div className={styles.statsRow}>
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>4+</span>
+                <span className={styles.statNumber}>5+</span>
                 <span className={styles.statLabel}>Years Experience</span>
               </div>
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>20+</span>
+                <span className={styles.statNumber}>10+</span>
                 <span className={styles.statLabel}>Projects Delivered</span>
               </div>
               <div className={styles.statCard}>
