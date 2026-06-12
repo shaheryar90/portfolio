@@ -20,7 +20,11 @@ export default function Footer() {
               </div>
               <div className={styles.contactItem}>
                 <span className={styles.icon}>📞</span>
-                <a href="tel:+923343898443" className={styles.link}>+92-3343898443</a>
+                <a href="tel:+923102328785" className={styles.link}>+92-310-2328785</a>
+              </div>
+              <div className={styles.contactItem}>
+                <span className={styles.icon}>💬</span>
+                <a href="https://wa.me/923102328785" target="_blank" rel="noopener noreferrer" className={styles.link}>WhatsApp Chat</a>
               </div>
               <div className={styles.contactItem}>
                 <span className={styles.icon}>📍</span>

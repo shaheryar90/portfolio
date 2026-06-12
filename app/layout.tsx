@@ -3,6 +3,7 @@ import "./globals.css";
 
 import { Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={outfit.variable} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <SmoothScroll />
           {children}
         </ThemeProvider>
       </body>
